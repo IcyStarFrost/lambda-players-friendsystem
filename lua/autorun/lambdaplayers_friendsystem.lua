@@ -21,6 +21,7 @@ hook.Add( "LambdaOnConvarsCreated", "lambdafriendsystemConvars", function()
 end )
 
 
+-- Helper function
 local function GetPlayers()
     local lambda = GetLambdaPlayers()
     local realplayers = player_GetAll()
@@ -109,7 +110,7 @@ local function Initialize( self, wepent )
         ent.l_friends[ self:GetCreationID() ] = nil -- Remove ourselves from ent's friends list
     end
 
-
+    -- Randomly set someone as our friend if it passes the chance
     if random( 0, 100 ) < GetConVar( "lambdaplayers_friend_friendchance" ):GetInt() then
         for k, v in RandomPairs( GetPlayers() ) do
             if v == self or self:IsFriendsWith( v ) or !self:CanBeFriendsWith( v ) then continue end
@@ -124,6 +125,7 @@ end
 local function Think( self, wepent )
     if CLIENT then return end
 
+    -- Debug lines that visualizes friends
     if dev:GetBool() then
         for k, v in pairs( self.l_friends ) do
             debugoverlay.Line( self:WorldSpaceCenter(), v:WorldSpaceCenter(), 0, self:GetPlyColor():ToColor(), true )
@@ -132,10 +134,12 @@ local function Think( self, wepent )
 
 end
 
+-- Prevent damage to friends
 local function OnInjured( self, info )
     return self:IsFriendsWith( info:GetAttacker() )
 end
 
+-- Defend our friends if we see the attacker
 local function OnOtherInjured( self, victim, info, took )
     if !took or !self:IsFriendsWith( victim ) or info:GetAttacker() == self then return end
     if !LambdaIsValid( self:GetEnemy() ) and self:CanTarget( info:GetAttacker() ) and self:CanSee( info:GetAttacker() ) then self:AttackTarget( info:GetAttacker() ) end
@@ -145,7 +149,6 @@ end
 hook.Add( "LambdaOnOtherInjured", "lambdafriendsystemoninjured", OnOtherInjured )
 hook.Add( "LambdaOnInjured", "lambdafriendsystemoninjured", OnInjured )
 hook.Add( "LambdaOnThink", "lambdafriendsystemthink", Think )
--- Initialize stuff
 hook.Add( "LambdaOnInitialize", "lambdafriendsysteminit", Initialize )
 
 if SERVER then
@@ -153,6 +156,7 @@ if SERVER then
     util.AddNetworkString( "lambdaplayerfriendsystem_addfriend" )
     util.AddNetworkString( "lambdaplayerfriendsystem_removefriend" )
 
+    -- Remove our friends
     local function OnRemove( self )
         for ID, friend in pairs( self.l_friends ) do
             self:RemoveFriend( friend )
@@ -185,6 +189,7 @@ elseif CLIENT then
     UpdateFont()
     cvars.AddChangeCallback( "lambdaplayers_uiscale", UpdateFont, "lambdafriendsystemfonts" )
 
+    -- Draw the outlines
     hook.Add( "PreDrawHalos", "lambdafriendsystemhalos", function()
         local friends = LocalPlayer().l_friends
         if friends then
@@ -195,6 +200,7 @@ elseif CLIENT then
         end
     end )
 
+    -- Display Friend tag and who the Lambda is friends with
     hook.Add( "HUDPaint", "lambdafriendsystemhud", function()
         local friends = LocalPlayer().l_friends
 
