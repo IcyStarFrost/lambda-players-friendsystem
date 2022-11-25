@@ -137,8 +137,7 @@ local function OnInjured( self, info )
 end
 
 local function OnOtherInjured( self, victim, info, took )
-    if !took or !self:IsFriendsWith( victim ) or info:GetAttacker() == self then print( self:Nick(), " FAILED ", !took , !self:IsFriendsWith( victim ) , info:GetAttacker() == self) return end
-    print( self:Nick(), !LambdaIsValid( self:GetEnemy() ) , self:CanTarget( info:GetAttacker() ) , self:CanSee( info:GetAttacker() ))
+    if !took or !self:IsFriendsWith( victim ) or info:GetAttacker() == self then return end
     if !LambdaIsValid( self:GetEnemy() ) and self:CanTarget( info:GetAttacker() ) and self:CanSee( info:GetAttacker() ) then self:AttackTarget( info:GetAttacker() ) end
 end
 
