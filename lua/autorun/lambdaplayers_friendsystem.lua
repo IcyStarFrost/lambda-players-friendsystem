@@ -44,6 +44,7 @@ local function Initialize( self, wepent )
         return ( ent.IsLambdaPlayer or ent:IsPlayer() ) and table_Count( self.l_friends ) < GetConVar( "lambdaplayers_friend_friendcount" ):GetInt() and table_Count( ent.l_friends ) < GetConVar( "lambdaplayers_friend_friendcount" ):GetInt() and !self:IsFriendsWith( ent )
     end
     
+    -- Return a random friend we have
     function self:GetRandomFriend()
         for k, v in RandomPairs( self.l_friends ) do return v end
     end
