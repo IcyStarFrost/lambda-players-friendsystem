@@ -1,6 +1,6 @@
 # Lambda Friend System
 
-A addon for Lambda Players that adds the ability for Lambda Players to friends with each other and Real Players. This is a Work in Progress external addon
+An addon for Lambda Players that adds the ability for Lambda Players to friends with each other and Real Players. This is a Work in Progress external addon
 
 ### Friend Features
 
