@@ -41,7 +41,8 @@ local function Initialize( self, wepent )
 
     -- If we can be friends with ent
     function self:CanBeFriendsWith( ent )
-        return ( ent.IsLambdaPlayer or ent:IsPlayer() ) and ( self.l_friends and ent.l_friends ) and table_Count( self.l_friends ) < GetConVar( "lambdaplayers_friend_friendcount" ):GetInt() and table_Count( ent.l_friends ) < GetConVar( "lambdaplayers_friend_friendcount" ):GetInt() and !self:IsFriendsWith( ent )
+        ent.l_friends = ent.l_friends or {}
+        return ( ent.IsLambdaPlayer or ent:IsPlayer() ) and table_Count( self.l_friends ) < GetConVar( "lambdaplayers_friend_friendcount" ):GetInt() and table_Count( ent.l_friends ) < GetConVar( "lambdaplayers_friend_friendcount" ):GetInt() and !self:IsFriendsWith( ent )
     end
     
     -- Return a random friend we have
