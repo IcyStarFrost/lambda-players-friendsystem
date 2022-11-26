@@ -5,6 +5,8 @@ An addon for Lambda Players that adds the ability for Lambda Players to friends 
 ### Friend Features
 
 - Friends will defend each other
+- Friends will assist each other
+- Friends will typically stay nearby each other
 - More to come 
 
 All settings are located under Friend System
