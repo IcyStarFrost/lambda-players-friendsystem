@@ -4,6 +4,7 @@ local pairs = pairs
 local RandomPairs = RandomPairs
 local random = math.random
 local table_Add = table.Add
+local VectorRand = VectorRand
 local net = net
 local player_GetAll = player.GetAll
 local debugoverlay = debugoverlay
@@ -141,14 +142,30 @@ local function OnInjured( self, info )
     return self:IsFriendsWith( info:GetAttacker() )
 end
 
--- Defend our friends if we see the attacker
-local function OnOtherInjured( self, victim, info, took )
-    if !took or !self:IsFriendsWith( victim ) or info:GetAttacker() == self then return end
-    if !LambdaIsValid( self:GetEnemy() ) and self:CanTarget( info:GetAttacker() ) and self:CanSee( info:GetAttacker() ) then self:AttackTarget( info:GetAttacker() ) end
+local function OnMove( self, pos, isonnavmesh )
+    if self:GetState() != "Idle" or random( 1, 2 ) != 1 then return end
+    local friend = self:GetRandomFriend()
+    
+    if IsValid( friend ) then
+        local navarea = navmesh.GetNavArea( friend:WorldSpaceCenter(), 500 )
+        local pos = IsValid( navarea ) and navarea:GetClosestPointOnArea( friend:GetPos() + VectorRand( -500, 500 ) ) or friend:GetPos() + VectorRand( -500, 500 )
+        self:RecomputePath( pos ) 
+    end
 end
 
+-- Defend our friends if we see the attacker
+local function OnOtherInjured( self, victim, info, took )
+    if !took or info:GetAttacker() == self then return end
 
-hook.Add( "LambdaOnOtherInjured", "lambdafriendsystemoninjured", OnOtherInjured )
+    if self:IsFriendsWith( victim ) and !LambdaIsValid( self:GetEnemy() ) and self:CanTarget( info:GetAttacker() ) and self:CanSee( info:GetAttacker() ) then 
+        self:AttackTarget( info:GetAttacker() ) 
+    elseif self:IsFriendsWith( info:GetAttacker() ) and !LambdaIsValid( self:GetEnemy() ) and self:CanTarget( victim ) and self:CanSee( victim ) then 
+        self:AttackTarget( victim ) 
+    end
+end
+
+hook.Add( "LambdaOnBeginMove", "lambdafriendsystemonbeginmove", OnMove )
+hook.Add( "LambdaOnOtherInjured", "lambdafriendsystemonotherinjured", OnOtherInjured )
 hook.Add( "LambdaOnInjured", "lambdafriendsystemoninjured", OnInjured )
 hook.Add( "LambdaOnThink", "lambdafriendsystemthink", Think )
 hook.Add( "LambdaOnInitialize", "lambdafriendsysteminit", Initialize )
