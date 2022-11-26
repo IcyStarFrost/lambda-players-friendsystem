@@ -143,7 +143,7 @@ local function OnInjured( self, info )
 end
 
 local function OnMove( self, pos, isonnavmesh )
-    if self:GetState() != "Idle" or random( 1, 2 ) != 1 then return end
+    if ( self:GetState() != "Idle" and self:GetState() != "FindTarget" ) or random( 0, 100 ) < 30 then return end
     local friend = self:GetRandomFriend()
     
     if IsValid( friend ) then
