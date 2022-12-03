@@ -214,7 +214,7 @@ elseif CLIENT then
         if friends then
             for k, v in pairs( friends ) do
                 if !LambdaIsValid( v ) or !v:IsBeingDrawn() then continue end
-                AddHalo( { v }, clientcolor, 3, 3, 1, true, false )
+                AddHalo( { v }, v:GetDisplayColor(), 3, 3, 1, true, false )
             end
         end
     end )
@@ -237,7 +237,7 @@ elseif CLIENT then
                 local vectoscreen = ( v:GetPos() + v:OBBCenter() * 2.5 ):ToScreen()
                 if !vectoscreen.visible then continue end
 
-                DrawText( "Friend", "lambdaplayers_friendfont", vectoscreen.x, vectoscreen.y, clientcolor, TEXT_ALIGN_CENTER )
+                DrawText( "Friend", "lambdaplayers_friendfont", vectoscreen.x, vectoscreen.y, v:GetDisplayColor(), TEXT_ALIGN_CENTER )
             end
 
         end
@@ -262,7 +262,7 @@ elseif CLIENT then
                     buildstring = buildstring .. v:Nick() .. ( table_Count( friends ) > count and ", " or "" )
                 end
                 buildstring = others > 0 and buildstring .. " and " .. ( others ) .. ( others > 1 and " others" or " other") or buildstring
-                DrawText( buildstring, "lambdaplayers_displayname", ( sw / 2 ), ( sh / 1.77 ) + LambdaScreenScale( 1 + uiscale:GetFloat() ), clientcolor, TEXT_ALIGN_CENTER)
+                DrawText( buildstring, "lambdaplayers_displayname", ( sw / 2 ), ( sh / 1.77 ) + LambdaScreenScale( 1 + uiscale:GetFloat() ), traceent:GetDisplayColor(), TEXT_ALIGN_CENTER)
             end
         end
 
