@@ -213,7 +213,7 @@ elseif CLIENT then
         local friends = LocalPlayer().l_friends
         if friends then
             for k, v in pairs( friends ) do
-                if !LambdaIsValid( v ) then continue end
+                if !LambdaIsValid( v ) or !v:IsBeingDrawn() then continue end
                 AddHalo( { v }, clientcolor, 3, 3, 1, true, false )
             end
         end
@@ -226,7 +226,7 @@ elseif CLIENT then
         if friends then
             
             for k, v in pairs( friends ) do
-                if !LambdaIsValid( v ) then continue end
+                if !LambdaIsValid( v ) or !v:IsBeingDrawn() then continue end
 
                 tracetable.start = LocalPlayer():EyePos()
                 tracetable.endpos = v:WorldSpaceCenter()
