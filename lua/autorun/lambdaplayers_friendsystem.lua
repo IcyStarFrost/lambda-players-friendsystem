@@ -6,7 +6,11 @@ local random = math.random
 local table_Add = table.Add
 local VectorRand = VectorRand
 local net = net
+local string_find = string.find
+local string_Explode = string.Explode
 local player_GetAll = player.GetAll
+local string_lower = string.lower
+local table_IsEmpty = table.IsEmpty
 local debugoverlay = debugoverlay
 local dev = GetConVar( "developer" )
 local uiscale = GetConVar( "lambdaplayers_uiscale" )
@@ -164,6 +168,62 @@ local function OnOtherInjured( self, victim, info, took )
     end
 end
 
+local function ProfilePanelLoad()
+    LambdaCreateProfileSetting( "DTextEntry", "l_permafriends", "Friend System", function( pnl, parent )
+        pnl:SetZPos( 100 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "Permanent Friend", parent, TOP )
+        lbl:SetZPos( 92 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "Input a Lambda Name", parent, TOP )
+        lbl:SetZPos( 93 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "or a Real Player's name", parent, TOP )
+        lbl:SetZPos( 94 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "To make them this profile's", parent, TOP )
+        lbl:SetZPos( 95 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "permanent friend.", parent, TOP )
+        lbl:SetZPos( 96 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "You can seperate names with", parent, TOP )
+        lbl:SetZPos( 97 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "commas ,", parent, TOP )
+        lbl:SetZPos( 98 )
+
+        local lbl = LAMBDAPANELS:CreateLabel( "Example: Eve,Blizz", parent, TOP )
+        lbl:SetZPos( 99 )
+
+    end )
+end
+
+local function GetPlayerByName( name )
+    for k, v in ipairs( player.GetAll() ) do
+        if string_lower( v:Nick() ) == string_lower( name ) then return v end
+    end
+end
+
+local function HandleProfiles( self, info )
+    local permafriendsstring = self.l_permafriends
+    local names = string_find( permafriendsstring, "," ) and string_Explode( ",", permafriendsstring ) or { permafriendsstring }
+
+    for k, name in ipairs( names ) do
+        local ply = GetPlayerByName( name )
+
+        if IsValid( ply ) then 
+            self:AddFriend( ply, true )
+        else
+            ply = GetLambdaPlayerByName( name )
+            if IsValid( ply ) then self:AddFriend( ply, true ) end
+        end
+    end
+end
+
+
+hook.Add( "LambdaOnProfileApplied", "lambdafriendsystemhandleprofiles", HandleProfiles )
+hook.Add( "LambdaOnProfilePanelLoaded", "lambdafriendsystemprofilepanel", ProfilePanelLoad )
 hook.Add( "LambdaOnBeginMove", "lambdafriendsystemonbeginmove", OnMove )
 hook.Add( "LambdaOnOtherInjured", "lambdafriendsystemonotherinjured", OnOtherInjured )
 hook.Add( "LambdaOnInjured", "lambdafriendsystemoninjured", OnInjured )
