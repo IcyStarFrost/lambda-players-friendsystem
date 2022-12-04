@@ -172,30 +172,11 @@ local function ProfilePanelLoad()
     LambdaCreateProfileSetting( "DTextEntry", "l_permafriends", "Friend System", function( pnl, parent )
         pnl:SetZPos( 100 )
 
-        local lbl = LAMBDAPANELS:CreateLabel( "Permanent Friend", parent, TOP )
-        lbl:SetZPos( 92 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "Input a Lambda Name", parent, TOP )
-        lbl:SetZPos( 93 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "or a Real Player's name", parent, TOP )
-        lbl:SetZPos( 94 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "To make them this profile's", parent, TOP )
-        lbl:SetZPos( 95 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "permanent friend.", parent, TOP )
-        lbl:SetZPos( 96 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "You can seperate names with", parent, TOP )
-        lbl:SetZPos( 97 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "commas ,", parent, TOP )
-        lbl:SetZPos( 98 )
-
-        local lbl = LAMBDAPANELS:CreateLabel( "Example: Eve,Blizz", parent, TOP )
+        local lbl = LAMBDAPANELS:CreateLabel( "[ Permanent Friend ]\nInput a Lambda Name or a Real Player's name to make them this profile's permanent friend. You can seperate names with commas , Example: Eve,Blizz", parent, TOP )
+        lbl:SetSize( 100, 100 )
+        lbl:Dock( TOP )
+        lbl:SetWrap( true )
         lbl:SetZPos( 99 )
-
     end )
 end
 
