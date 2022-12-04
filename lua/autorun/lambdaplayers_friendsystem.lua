@@ -207,6 +207,7 @@ end
 
 local function HandleProfiles( self, info )
     local permafriendsstring = self.l_permafriends
+    if !permafriendsstring then return end
     local names = string_find( permafriendsstring, "," ) and string_Explode( ",", permafriendsstring ) or { permafriendsstring }
 
     for k, name in ipairs( names ) do
