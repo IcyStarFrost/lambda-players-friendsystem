@@ -315,6 +315,8 @@ elseif CLIENT then
         local lambda = net.ReadEntity()
         local receiver = net.ReadEntity()
         receiver.l_friends = receiver.l_friends or {}
+
+        if !receiver.l_friends then return end
         receiver.l_friends[ id ] = lambda
     end )
 
