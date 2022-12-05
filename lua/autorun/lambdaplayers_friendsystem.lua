@@ -143,7 +143,7 @@ end
 
 -- Prevent damage to friends
 local function OnInjured( self, info )
-    return self:IsFriendsWith( info:GetAttacker() )
+    if self:IsFriendsWith( info:GetAttacker() ) then return true end
 end
 
 local function OnMove( self, pos, isonnavmesh )
@@ -225,7 +225,7 @@ if SERVER then
     end
 
     local function CanTarget( self, target ) -- Do not attack friends
-        return self:IsFriendsWith( target ) 
+        if self:IsFriendsWith( target ) then return true end
     end
 
     hook.Add( "LambdaOnRemove", "lambdafriendsystemOnRemove", OnRemove )
