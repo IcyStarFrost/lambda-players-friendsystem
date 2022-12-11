@@ -293,10 +293,11 @@ elseif CLIENT then
             local buildstring = "Friends With: "
             local friends = traceent.l_friends
 
-            if friends then
+            if friends and !table_IsEmpty( friends ) then
                 local count = 0
                 local others = 0
                 for k, v in pairs( friends ) do
+                    if !IsValid( v ) then friends[ k ] = nil continue end 
                     count = count + 1
 
                     if count > 3 then others = others + 1 continue end
