@@ -20,6 +20,7 @@ local uiscale = GetConVar( "lambdaplayers_uiscale" )
 hook.Add( "LambdaOnConvarsCreated", "lambdafriendsystemConvars", function()
 
     CreateLambdaConvar( "lambdaplayers_friend_enabled", 1, true, false, false, "Enables the friend system that will allow Lambda Players to be friends with each other or with players and treat them as such", 0, 1, { name = "Enable Friend System", type = "Bool", category = "Friend System" } )
+    CreateLambdaConvar( "lambdaplayers_friend_drawhalo", 1, true, true, false, "If friends should have a halo around them", 0, 1, { name = "Draw Halos", type = "Bool", category = "Friend System" } )
     CreateLambdaConvar( "lambdaplayers_friend_friendcount", 3, true, false, false, "How many friends a Lambda/Real Player can have", 1, 30, { name = "Friend Count", type = "Slider", decimals = 0, category = "Friend System" } )
     CreateLambdaConvar( "lambdaplayers_friend_friendchance", 5, true, false, false, "The chance a Lambda Player will spawn as someone's friend", 1, 100, { name = "Friend Chance", type = "Slider", decimals = 0, category = "Friend System" } )
 
@@ -260,6 +261,7 @@ elseif CLIENT then
 
     -- Draw the outlines
     hook.Add( "PreDrawHalos", "lambdafriendsystemhalos", function()
+        if !GetConVar( "lambdaplayers_friend_drawhalo" ):GetBool() then return end
         local friends = LocalPlayer().l_friends
         if friends then
             for k, v in pairs( friends ) do
