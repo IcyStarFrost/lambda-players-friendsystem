@@ -228,6 +228,14 @@ if SERVER then
         if self:IsFriendsWith( target ) then return true end
     end
 
+    local function EntityTakeDamage( ent, info )
+        local attacker = info:GetAttacker()
+        if ent:IsPlayer() and attacker.IsLambdaPlayer then
+            if attacker:IsFriendsWith( ent ) then return true end
+        end
+    end
+
+    hook.Add("EntityTakeDamage", "lambdafriendsystemtakedamage", EntityTakeDamage )
     hook.Add( "LambdaOnRemove", "lambdafriendsystemOnRemove", OnRemove )
     hook.Add( "LambdaCanTarget", "lambdafriendsystemtarget",  CanTarget )
 
