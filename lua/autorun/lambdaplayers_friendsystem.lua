@@ -39,6 +39,7 @@ local function Initialize( self, wepent )
     if CLIENT then return end
 
     self.l_friends = {}
+    self.l_nearbycheck = CurTime() + 15
 
     -- If we are friends with ent
     function self:IsFriendsWith( ent )
@@ -140,9 +141,19 @@ local function Think( self, wepent )
         end
     end
 
+    if CurTime() > self.l_nearbycheck then
+
+        if random( 0, 100 ) <= 5 then
+            local nearest = self:GetClosestEntity( nil, 200, function( ent ) return ent.IsLambdaPlayer or ent:IsPlayer() end )
+            if IsValid( nearest ) then self:AddFriend( nearest ) end
+        end
+
+        self.l_nearbycheck = CurTime() + 15
+    end
+
 end
 
--- Prevent damage to friends
+-- Prevent damage from friends
 local function OnInjured( self, info )
     if self:IsFriendsWith( info:GetAttacker() ) then return true end
 end
@@ -166,6 +177,10 @@ local function OnOtherInjured( self, victim, info, took )
         self:AttackTarget( info:GetAttacker() ) 
     elseif self:IsFriendsWith( info:GetAttacker() ) and !LambdaIsValid( self:GetEnemy() ) and self:CanTarget( victim ) and self:CanSee( victim ) then 
         self:AttackTarget( victim ) 
+    end
+
+    if victim == self:GetEnemy() and info:GetAttacker() != self and random( 0, 100 ) <= 10  then
+        self:AddFriend( info:GetAttacker() )
     end
 end
 
@@ -204,7 +219,20 @@ local function HandleProfiles( self, info )
     end
 end
 
+local ishealing = {
+    [ "item_healthkit" ] = true,
+    [ "item_healthvial" ] = true,
+    [ "item_battery" ] = true,
+    [ "sent_ball" ] = true
+}
 
+local function OnPickupEnt( self, ent )
+    if ishealing[ ent:GetClass() ] and random( 0, 100 ) <= 5 and ( CurTime() - ent:GetCreationTime() ) < 5 and IsValid( ent:GetCreator() ) then
+        self:AddFriend( ent:GetCreator() )
+    end
+end
+
+hook.Add( "LambdaOnPickupEnt", "lambdafriendsystemonpickupents", OnPickupEnt )
 hook.Add( "LambdaOnProfileApplied", "lambdafriendsystemhandleprofiles", HandleProfiles )
 hook.Add( "LambdaOnProfilePanelLoaded", "lambdafriendsystemprofilepanel", ProfilePanelLoad )
 hook.Add( "LambdaOnBeginMove", "lambdafriendsystemonbeginmove", OnMove )
