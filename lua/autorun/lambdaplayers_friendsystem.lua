@@ -17,14 +17,11 @@ local uiscale = GetConVar( "lambdaplayers_uiscale" )
 
 -- Friend System Convars
 
-hook.Add( "LambdaOnConvarsCreated", "lambdafriendsystemConvars", function()
+CreateLambdaConvar( "lambdaplayers_friend_enabled", 1, true, false, false, "Enables the friend system that will allow Lambda Players to be friends with each other or with players and treat them as such", 0, 1, { name = "Enable Friend System", type = "Bool", category = "Friend System" } )
+CreateLambdaConvar( "lambdaplayers_friend_drawhalo", 1, true, true, false, "If friends should have a halo around them", 0, 1, { name = "Draw Halos", type = "Bool", category = "Friend System" } )
+CreateLambdaConvar( "lambdaplayers_friend_friendcount", 3, true, false, false, "How many friends a Lambda/Real Player can have", 1, 30, { name = "Friend Count", type = "Slider", decimals = 0, category = "Friend System" } )
+CreateLambdaConvar( "lambdaplayers_friend_friendchance", 5, true, false, false, "The chance a Lambda Player will spawn as someone's friend", 1, 100, { name = "Friend Chance", type = "Slider", decimals = 0, category = "Friend System" } )
 
-    CreateLambdaConvar( "lambdaplayers_friend_enabled", 1, true, false, false, "Enables the friend system that will allow Lambda Players to be friends with each other or with players and treat them as such", 0, 1, { name = "Enable Friend System", type = "Bool", category = "Friend System" } )
-    CreateLambdaConvar( "lambdaplayers_friend_drawhalo", 1, true, true, false, "If friends should have a halo around them", 0, 1, { name = "Draw Halos", type = "Bool", category = "Friend System" } )
-    CreateLambdaConvar( "lambdaplayers_friend_friendcount", 3, true, false, false, "How many friends a Lambda/Real Player can have", 1, 30, { name = "Friend Count", type = "Slider", decimals = 0, category = "Friend System" } )
-    CreateLambdaConvar( "lambdaplayers_friend_friendchance", 5, true, false, false, "The chance a Lambda Player will spawn as someone's friend", 1, 100, { name = "Friend Chance", type = "Slider", decimals = 0, category = "Friend System" } )
-
-end )
 
 
 -- Helper function
@@ -184,17 +181,16 @@ local function OnOtherInjured( self, victim, info, took )
     end
 end
 
-local function ProfilePanelLoad()
-    LambdaCreateProfileSetting( "DTextEntry", "l_permafriends", "Friend System", function( pnl, parent )
-        pnl:SetZPos( 100 )
 
-        local lbl = LAMBDAPANELS:CreateLabel( "[ Permanent Friend ]\nInput a Lambda Name or a Real Player's name to make them this profile's permanent friend. You can seperate names with commas , Example: Eve,Blizz", parent, TOP )
-        lbl:SetSize( 100, 100 )
-        lbl:Dock( TOP )
-        lbl:SetWrap( true )
-        lbl:SetZPos( 99 )
-    end )
-end
+LambdaCreateProfileSetting( "DTextEntry", "l_permafriends", "Friend System", function( pnl, parent )
+    pnl:SetZPos( 100 ) -- ZPos is important for the order
+    local lbl = LAMBDAPANELS:CreateLabel( "[ Permanent Friend ]\nInput a Lambda Name or a Real Player's name to make them this profile's permanent friend. You can seperate names with commas , Example: Eve,Blizz", parent, TOP )
+    lbl:SetSize( 100, 100 )
+    lbl:Dock( TOP )
+    lbl:SetWrap( true )
+    lbl:SetZPos( 99 )
+end )
+
 
 local function GetPlayerByName( name )
     for k, v in ipairs( player.GetAll() ) do
@@ -234,7 +230,6 @@ end
 
 hook.Add( "LambdaOnPickupEnt", "lambdafriendsystemonpickupents", OnPickupEnt )
 hook.Add( "LambdaOnProfileApplied", "lambdafriendsystemhandleprofiles", HandleProfiles )
-hook.Add( "LambdaOnProfilePanelLoaded", "lambdafriendsystemprofilepanel", ProfilePanelLoad )
 hook.Add( "LambdaOnBeginMove", "lambdafriendsystemonbeginmove", OnMove )
 hook.Add( "LambdaOnOtherInjured", "lambdafriendsystemonotherinjured", OnOtherInjured )
 hook.Add( "LambdaOnInjured", "lambdafriendsystemoninjured", OnInjured )
