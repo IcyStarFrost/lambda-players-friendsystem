@@ -40,6 +40,7 @@ local function Initialize( self, wepent )
 
     -- If we are friends with ent
     function self:IsFriendsWith( ent )
+        ent.l_friends = ent.l_friends or {}
         return IsValid( ent ) and IsValid( self.l_friends[ ent:GetCreationID() ] )
     end
 
