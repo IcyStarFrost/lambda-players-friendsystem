@@ -141,7 +141,7 @@ local function Think( self, wepent )
 
     if CurTime() > self.l_nearbycheck then
 
-        if random( 0, 100 ) <= 5 then
+        if !self:InCombat() and random( 0, 100 ) <= 5 then
             local nearest = self:GetClosestEntity( nil, 200, function( ent ) return ent.IsLambdaPlayer or ent:IsPlayer() end )
             if IsValid( nearest ) then self:AddFriend( nearest ) end
         end
