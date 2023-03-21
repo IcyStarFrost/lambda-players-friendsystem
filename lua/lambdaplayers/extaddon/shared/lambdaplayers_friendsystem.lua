@@ -187,6 +187,7 @@ LambdaCreateProfileSetting( "DTextEntry", "l_permafriends", "Friend System", fun
     pnl:SetZPos( 100 ) -- ZPos is important for the order
     local lbl = LAMBDAPANELS:CreateLabel( "[ Permanent Friend ]\nInput a Lambda Name or a Real Player's name to make them this profile's permanent friend. You can seperate names with commas , Example: Eve,Blizz", parent, TOP )
     lbl:SetSize( 100, 100 )
+    lbl:SetParent( parent )
     lbl:Dock( TOP )
     lbl:SetWrap( true )
     lbl:SetZPos( 99 )
