@@ -18,6 +18,7 @@ local uiscale = GetConVar( "lambdaplayers_uiscale" )
 -- Friend System Convars
 
 CreateLambdaConvar( "lambdaplayers_friend_enabled", 1, true, false, false, "Enables the friend system that will allow Lambda Players to be friends with each other or with players and treat them as such", 0, 1, { name = "Enable Friend System", type = "Bool", category = "Friend System" } )
+CreateLambdaConvar( "lambdaplayers_friend_friendlyfire", 0, true, false, false, "If friends can hurt each other or not", 0, 1, { name = "Allow Friendly Fire", type = "Bool", category = "Friend System" } )
 CreateLambdaConvar( "lambdaplayers_friend_drawhalo", 1, true, true, false, "If friends should have a halo around them", 0, 1, { name = "Draw Halos", type = "Bool", category = "Friend System" } )
 CreateLambdaConvar( "lambdaplayers_friend_friendcount", 3, true, false, false, "How many friends a Lambda/Real Player can have", 1, 30, { name = "Friend Count", type = "Slider", decimals = 0, category = "Friend System" } )
 CreateLambdaConvar( "lambdaplayers_friend_friendchance", 5, true, false, false, "The chance a Lambda Player will spawn as someone's friend", 1, 100, { name = "Friend Chance", type = "Slider", decimals = 0, category = "Friend System" } )
@@ -153,7 +154,7 @@ end
 
 -- Prevent damage from friends
 local function OnInjured( self, info )
-    if self:IsFriendsWith( info:GetAttacker() ) then return true end
+    if !GetConVar( "lambdaplayers_friend_friendlyfire" ):GetBool() and self:IsFriendsWith( info:GetAttacker() ) then return true end
 end
 
 local function OnMove( self, pos, isonnavmesh )
@@ -256,7 +257,7 @@ if SERVER then
 
     local function EntityTakeDamage( ent, info )
         local attacker = info:GetAttacker()
-        if ent:IsPlayer() and attacker.IsLambdaPlayer then
+        if !GetConVar( "lambdaplayers_friend_friendlyfire" ):GetBool() and ent:IsPlayer() and attacker.IsLambdaPlayer then
             if attacker:IsFriendsWith( ent ) then return true end
         end
     end
