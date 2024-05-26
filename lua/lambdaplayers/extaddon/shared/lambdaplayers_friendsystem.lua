@@ -22,6 +22,8 @@ CreateLambdaConvar( "lambdaplayers_friend_friendlyfire", 0, true, false, false, 
 CreateLambdaConvar( "lambdaplayers_friend_drawhalo", 1, true, true, false, "If friends should have a halo around them", 0, 1, { name = "Draw Halos", type = "Bool", category = "Friend System" } )
 CreateLambdaConvar( "lambdaplayers_friend_friendcount", 3, true, false, false, "How many friends a Lambda/Real Player can have", 1, 30, { name = "Friend Count", type = "Slider", decimals = 0, category = "Friend System" } )
 CreateLambdaConvar( "lambdaplayers_friend_friendchance", 5, true, false, false, "The chance a Lambda Player will spawn as someone's friend", 1, 100, { name = "Friend Chance", type = "Slider", decimals = 0, category = "Friend System" } )
+CreateLambdaConvar( "lambdaplayers_friend_alwaysstaynearplayers", 0, true, false, false, "If Lambda Friends should favor following real players", 0, 1, { name = "Always Follow Real Players", type = "Bool", category = "Friend System" } )
+CreateLambdaConvar( "lambdaplayers_friend_alwaysstaynearfriends", 0, true, false, false, "If Friends should always stick together, rather than ocassionally following a frined", 0, 1, { name = "Stick Together", type = "Bool", category = "Friend System" } )
 
 
 
@@ -38,6 +40,7 @@ local function Initialize( self, wepent )
 
     self.l_friends = {}
     self.l_nearbycheck = CurTime() + 15
+    self.l_friendupdate = CurTime() + 3
 
     -- If we are friends with ent
     function self:IsFriendsWith( ent )
@@ -52,8 +55,31 @@ local function Initialize( self, wepent )
     end
     
     -- Return a random friend we have
-    function self:GetRandomFriend()
-        for k, v in RandomPairs( self.l_friends ) do return v end
+    function self:GetRandomFriend( real_player_only )
+        for k, v in RandomPairs( self.l_friends ) do 
+            if real_player_only and v:IsPlayer() then
+                return v
+            elseif !real_player_only then
+                return v 
+            end
+        end
+    end
+
+    -- Updates clientside friendships. Ensures friends are properly displayed and halo'd on the client
+    function self:UpdateClientFriends()
+        for id, ent in pairs( self.l_friends ) do
+            net.Start( "lambdaplayerfriendsystem_addfriend" )
+            net.WriteUInt( self:GetCreationID(), 32 )
+            net.WriteEntity( self )
+            net.WriteEntity( ent )
+            net.Broadcast()
+    
+            net.Start( "lambdaplayerfriendsystem_addfriend" )
+            net.WriteUInt( ent:GetCreationID(), 32 )
+            net.WriteEntity( ent )
+            net.WriteEntity( self )
+            net.Broadcast()
+        end
     end
 
     -- Add ent to our friends list
@@ -140,6 +166,11 @@ local function Think( self, wepent )
         end
     end
 
+    if CurTime() > self.l_friendupdate then
+        self:UpdateClientFriends()
+        self.l_friendupdate = CurTime() + 3
+    end
+
     if CurTime() > self.l_nearbycheck then
 
         if !self:InCombat() and random( 0, 100 ) <= 5 then
@@ -158,12 +189,12 @@ local function OnInjured( self, info )
 end
 
 local function OnMove( self, pos, isonnavmesh )
-    if ( self:GetState() != "Idle" and self:GetState() != "FindTarget" ) or random( 0, 100 ) < 30 then return end
-    local friend = self:GetRandomFriend()
-    
+    if ( !GetConVar( "lambdaplayers_friend_alwaysstaynearfriends" ):GetBool() and random( 0, 100 ) < 30) then return end
+    local friend = self:GetRandomFriend( GetConVar( "lambdaplayers_friend_alwaysstaynearplayers" ):GetBool() )
+
     if IsValid( friend ) then
         local navarea = navmesh.GetNavArea( friend:WorldSpaceCenter(), 500 )
-        local pos = IsValid( navarea ) and navarea:GetClosestPointOnArea( friend:GetPos() + VectorRand( -500, 500 ) ) or friend:GetPos() + VectorRand( -500, 500 )
+        local pos = IsValid( navarea ) and navarea:GetClosestPointOnArea( friend:GetPos() + VectorRand( -1000, 1000 ) ) or friend:GetPos() + VectorRand( -1000, 1000 )
         self:RecomputePath( pos ) 
     end
 end
