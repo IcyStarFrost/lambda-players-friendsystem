@@ -346,7 +346,7 @@ elseif CLIENT then
                 local vectoscreen = ( v:GetPos() + v:OBBCenter() * 2.5 ):ToScreen()
                 if !vectoscreen.visible then continue end
 
-                DrawText( "Friend", "lambdaplayers_friendfont", vectoscreen.x, vectoscreen.y, v:GetDisplayColor(), TEXT_ALIGN_CENTER )
+                DrawText( result.Entity:Name(), "lambdaplayers_friendfont", vectoscreen.x, vectoscreen.y, v:GetDisplayColor(), TEXT_ALIGN_CENTER )
             end
 
         end
