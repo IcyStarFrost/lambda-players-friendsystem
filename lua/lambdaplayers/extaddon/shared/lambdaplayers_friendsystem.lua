@@ -26,6 +26,8 @@ CreateLambdaConvar( "lambdaplayers_friend_alwaysstaynearplayers", 0, true, false
 CreateLambdaConvar( "lambdaplayers_friend_alwaysstaynearfriends", 0, true, false, false, "If Friends should always stick together, rather than ocassionally following a frined", 0, 1, { name = "Stick Together", type = "Bool", category = "Friend System" } )
 
 
+local green = Color( 0, 168, 90 )
+
 
 -- Helper function
 local function GetPlayers()
@@ -87,6 +89,10 @@ local function Initialize( self, wepent )
         ent.l_friends = ent.l_friends or {} -- Make sure this table exists
         if self:IsFriendsWith( ent ) or !self:CanBeFriendsWith( ent ) and !forceadd or !GetConVar( "lambdaplayers_friend_enabled" ):GetBool() then return end
         
+        if ent:IsPlayer() then
+            LambdaPlayers_ChatAdd( ent, self:GetPlyColor():ToColor(), self:Name(), green, " friended you" )
+        end
+
         self.l_friends[ ent:GetCreationID() ] = ent -- Add ent to our friends list
         ent.l_friends[ self:GetCreationID() ] = self -- Add ourselves to ent's friends list
 
@@ -106,6 +112,10 @@ local function Initialize( self, wepent )
         for ID, entfriend in pairs( ent.l_friends ) do
             if entfriend == self or !self:CanBeFriendsWith( entfriend ) then continue end -- We can't be friends with em
             entfriend.l_friends = entfriend.l_friends or {}
+
+            if ent:IsPlayer() then
+                LambdaPlayers_ChatAdd( ent, self:GetPlyColor():ToColor(), self:Name(), green, " friended you" )
+            end
 
             net.Start( "lambdaplayerfriendsystem_addfriend" )
             net.WriteUInt( self:GetCreationID(), 32 )
