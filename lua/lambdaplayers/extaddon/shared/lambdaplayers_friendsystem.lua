@@ -91,6 +91,7 @@ local function Initialize( self, wepent )
         
         if ent:IsPlayer() then
             LambdaPlayers_ChatAdd( ent, self:GetPlyColor():ToColor(), self:Name(), green, " friended you" )
+            ent:EmitSound( "friends/friend_online.wav", 20 )
         end
 
         self.l_friends[ ent:GetCreationID() ] = ent -- Add ent to our friends list
