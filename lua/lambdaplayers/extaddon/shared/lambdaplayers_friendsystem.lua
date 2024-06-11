@@ -87,11 +87,11 @@ local function Initialize( self, wepent )
     -- Add ent to our friends list
     function self:AddFriend( ent, forceadd )
         ent.l_friends = ent.l_friends or {} -- Make sure this table exists
-        if self:IsFriendsWith( ent ) or !self:CanBeFriendsWith( ent ) and !forceadd or !GetConVar( "lambdaplayers_friend_enabled" ):GetBool() then return end
+        if ent == self or !self:CanBeFriendsWith( ent ) and !forceadd or !GetConVar( "lambdaplayers_friend_enabled" ):GetBool() then return end
         
         if ent:IsPlayer() then
             LambdaPlayers_ChatAdd( ent, self:GetPlyColor():ToColor(), self:Name(), green, " friended you" )
-            ent:EmitSound( "friends/friend_online.wav", 20 )
+            ent:EmitSound( "friends/friend_online.wav", 35 )
         end
 
         self.l_friends[ ent:GetCreationID() ] = ent -- Add ent to our friends list
@@ -114,8 +114,9 @@ local function Initialize( self, wepent )
             if entfriend == self or !self:CanBeFriendsWith( entfriend ) then continue end -- We can't be friends with em
             entfriend.l_friends = entfriend.l_friends or {}
 
-            if ent:IsPlayer() then
-                LambdaPlayers_ChatAdd( ent, self:GetPlyColor():ToColor(), self:Name(), green, " friended you" )
+            if entfriend:IsPlayer() then
+                entfriend:EmitSound( "friends/friend_online.wav", 35 )
+                LambdaPlayers_ChatAdd( entfriend, self:GetPlyColor():ToColor(), self:Name(), green, " friended you" )
             end
 
             net.Start( "lambdaplayerfriendsystem_addfriend" )
